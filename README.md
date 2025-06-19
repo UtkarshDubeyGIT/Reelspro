@@ -1,36 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Reelspro
+
+Reelspro is a modern, full-stack video sharing platform built with Next.js 15, TypeScript, MongoDB (via Mongoose), and NextAuth for authentication. It features secure user registration, login, video upload (with ImageKit integration), and a responsive UI styled with Tailwind CSS and DaisyUI.
+
+## Features
+
+- **User Authentication:**
+  - Secure registration and login using NextAuth and credentials provider.
+  - Passwords are hashed with bcryptjs.
+  - Session management with JWT.
+
+- **Video Upload & Management:**
+  - Upload videos and images using ImageKit (with server-side authentication).
+  - Video metadata (title, description, thumbnail, etc.) stored in MongoDB.
+  - Video transformation and quality settings supported.
+
+- **API Endpoints:**
+  - `/api/auth/register`: Register a new user.
+  - `/api/auth/[...nextauth]`: NextAuth authentication routes.
+  - `/api/imagekit-auth`: Get ImageKit authentication parameters.
+  - `/api/videos`: Get all videos or upload a new video (protected route).
+
+- **Frontend:**
+  - Built with React and Next.js App Router.
+  - Responsive design with Tailwind CSS and DaisyUI.
+  - Modern UI with custom fonts (Geist).
+
+- **Security:**
+  - Middleware to protect API and page routes.
+  - Environment variables for sensitive keys.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- MongoDB instance (local or cloud)
+- ImageKit account (for media uploads)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Installation
+1. **Clone the repository:**
+   ```bash
+   git clone <your-repo-url>
+   cd Reelspro
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+3. **Configure environment variables:**
+   - Copy `env.sample` to `.env.local` and fill in the required values:
+     ```env
+     MONGODB_URL=your_mongodb_connection_string
+     NEXTAUTH_SECRET=your_nextauth_secret
+     NEXT_PUBLIC_PUBLIC_KEY=your_imagekit_public_key
+     PRIVATE_KEY=your_imagekit_private_key
+     NEXT_PUBLIC_URL_ENDPOINT=your_imagekit_url_endpoint
+     ```
+
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) to view the app.
+
+## Project Structure
+
+```
+app/
+  api/
+    auth/
+      [...nextauth]/route.ts   # NextAuth API
+      register/route.ts        # User registration API
+    imagekit-auth/route.ts     # ImageKit auth API
+    videos/route.ts            # Video CRUD API
+  components/                  # React components
+  globals.css                  # Global styles
+  layout.tsx                   # App layout
+  page.tsx                     # Home page
+  register/page.tsx            # Register page
+lib/
+  api-client.ts                # API client for frontend
+  auth.ts                      # NextAuth config
+  db.ts                        # MongoDB connection
+models/
+  User.ts                      # User model
+  Video.ts                     # Video model
+public/                        # Static assets
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Key Technologies
+- **Next.js 15** (App Router)
+- **TypeScript**
+- **MongoDB & Mongoose**
+- **NextAuth** (Credentials Provider)
+- **ImageKit** (Media upload & CDN)
+- **Tailwind CSS & DaisyUI**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## API Overview
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Register User
+- **POST** `/api/auth/register`
+  - Body: `{ email, password }`
+  - Response: Success or error message
 
-## Learn More
+### Login
+- **POST** `/api/auth/[...nextauth]`
+  - Handled by NextAuth
 
-To learn more about Next.js, take a look at the following resources:
+### Upload Video
+- **POST** `/api/videos`
+  - Requires authentication
+  - Body: `{ title, description, videoUrl, thumbnailUrl, ... }`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Get Videos
+- **GET** `/api/videos`
+  - Returns list of videos
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### ImageKit Auth
+- **GET** `/api/imagekit-auth`
+  - Returns ImageKit authentication parameters
 
-## Deploy on Vercel
+## Environment Variables
+See `.env.sample` for required variables. Example:
+```
+MONGODB_URL=your_mongodb_connection_string
+NEXTAUTH_SECRET=your_nextauth_secret
+NEXT_PUBLIC_PUBLIC_KEY=your_imagekit_public_key
+PRIVATE_KEY=your_imagekit_private_key
+NEXT_PUBLIC_URL_ENDPOINT=your_imagekit_url_endpoint
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Development Scripts
+- `npm run dev` — Start development server
+- `npm run build` — Build for production
+- `npm run start` — Start production server
+- `npm run lint` — Lint codebase
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+You can deploy this app to Vercel or any Node.js hosting provider. Ensure all environment variables are set in your deployment environment.
+
+## Contributing
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+[MIT](LICENSE)
+
+---
+
+*This project follows best practices for security, scalability, and maintainability. For questions or support, please open an issue.*
