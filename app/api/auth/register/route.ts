@@ -1,54 +1,42 @@
-import {NextRequest, NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";       
+import { connectToDatabase } from "@/lib/db";
 import User from "@/models/User";
-// import { connect } from "http2";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest){
+export async function POST(request: NextRequest) {
+  try {
+    const { email, password } = await request.json();
 
-    try{
-        const { email, password} = await request.json();
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: "Email and password are required" },
+        { status: 400 }
+      );
+    }
 
-        if(!email || !password){
-            return NextResponse.json(
-                {error: "Email and password are required"},
-                {status: 400}
-            )
+    await connectToDatabase();
 
-            
-        };
-        await connectToDatabase();
-        
-        const existingUser = await User.findOne({email});
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "Email already exists" },
+        { status: 409 }
+      );
+    }
 
-        if(existingUser){
-            return NextResponse.json(
-                {error: " email already exists"},
-                {status:400}
-            )
-        };
+    await User.create({
+      email,
+      password,
+    });
 
-        await User.create({
-            email,
-            password
-        });
-
-        return NextResponse.json(
-            {
-                message: "user registered successfully"
-            },
-            {
-                status: 201
-            },
-        );
-
-
-   } catch (error){
-        console.error(error);
-        return NextResponse.json(
-            { error: "Failed to register User"},
-            { status : 500}
-        ) 
-   }
-
-
+    return NextResponse.json(
+      { message: "User registered successfully" },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Failed to register user" },
+      { status: 500 }
+    );
+  }
 }
