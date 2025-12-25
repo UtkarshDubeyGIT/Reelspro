@@ -42,18 +42,19 @@ export async function POST(request: NextRequest) {
     // Send verification email
     try {
       await sendVerificationEmail(email, verificationToken);
-    } catch (emailError: any) {
+    } catch (emailError: unknown) {
       console.error("Failed to send verification email:", emailError);
       
       // If it's a Resend validation error, return a more helpful error
-      if (emailError?.message?.includes("Resend API Error")) {
+      const errorMessage = emailError instanceof Error ? emailError.message : String(emailError);
+      if (errorMessage.includes("Resend API Error")) {
         return NextResponse.json(
           { 
             error: "Failed to send verification email. Please check your Resend configuration.",
-            details: emailError.message,
+            details: errorMessage,
             verificationToken: process.env.NODE_ENV === "development" ? verificationToken : undefined, // Only expose token in dev
             verificationUrl: process.env.NODE_ENV === "development" 
-              ? `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/verify-email?token=${verificationToken}`
+              ? `${process.env.APP_URL || process.env.NEXTAUTH_URL || "http://localhost:3000"}/verify-email?token=${verificationToken}`
               : undefined
           },
           { status: 500 }
