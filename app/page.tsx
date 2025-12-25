@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { IVideo } from "@/models/Video";
 import ReelsFeed from "./components/ReelsFeed";
-import { apiClient } from "@/lib/api-client";
 
 export default function Home() {
   const [initialVideos, setInitialVideos] = useState<IVideo[]>([]);

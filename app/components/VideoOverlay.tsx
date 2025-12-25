@@ -2,10 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { IVideo } from "@/models/Video";
+import { IUser } from "@/models/User";
+import mongoose from "mongoose";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Heart, MessageCircle, Share2, Plus } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Heart, MessageCircle, Share2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
 import CommentSection from "./CommentSection";
@@ -75,7 +82,7 @@ export default function VideoOverlay({ video }: VideoOverlayProps) {
       const data = await response.json();
       setLiked(data.liked);
       setLikesCount(data.likes);
-    } catch (error) {
+    } catch {
       // Revert on error
       setLiked(previousLiked);
       setLikesCount(previousCount);
@@ -101,7 +108,7 @@ export default function VideoOverlay({ video }: VideoOverlayProps) {
           title: "Shared",
           description: "Video shared successfully",
         });
-      } catch (error) {
+      } catch {
         // User cancelled or error
       }
     } else {
@@ -114,9 +121,20 @@ export default function VideoOverlay({ video }: VideoOverlayProps) {
     }
   };
 
-  const author = video.author as any;
-  const authorName = author?.displayName || author?.username || author?.email || "Unknown";
-  const authorAvatar = author?.avatar || "";
+  // Author can be either ObjectId or populated User object
+  const author = video.author as
+    | (IUser & { _id?: mongoose.Types.ObjectId; id?: string })
+    | mongoose.Types.ObjectId
+    | undefined;
+  const isPopulatedAuthor =
+    author && typeof author === "object" && "email" in author;
+  const authorName = isPopulatedAuthor
+    ? author.displayName || author.username || author.email || "Unknown"
+    : "Unknown";
+  const authorAvatar = isPopulatedAuthor ? author.avatar || "" : "";
+  const authorId = isPopulatedAuthor
+    ? author._id?.toString() || author.id || ""
+    : "";
 
   return (
     <>
@@ -125,7 +143,7 @@ export default function VideoOverlay({ video }: VideoOverlayProps) {
           {/* Left side - Author info */}
           <div className="flex-1 pointer-events-auto">
             <Link
-              href={`/profile/${author?._id || author?.id || ""}`}
+              href={`/profile/${authorId}`}
               className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity"
             >
               <Avatar className="h-10 w-10 border-2 border-white">
@@ -139,7 +157,9 @@ export default function VideoOverlay({ video }: VideoOverlayProps) {
               </div>
             </Link>
             <p className="text-sm mb-1 line-clamp-2">{video.title}</p>
-            <p className="text-xs text-white/80 line-clamp-1">{video.description}</p>
+            <p className="text-xs text-white/80 line-clamp-1">
+              {video.description}
+            </p>
           </div>
 
           {/* Right side - Action buttons */}
@@ -157,12 +177,7 @@ export default function VideoOverlay({ video }: VideoOverlayProps) {
                     onClick={handleLike}
                     disabled={loading}
                   >
-                    <Heart
-                      className={cn(
-                        "h-6 w-6",
-                        liked && "fill-current"
-                      )}
-                    />
+                    <Heart className={cn("h-6 w-6", liked && "fill-current")} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -220,4 +235,3 @@ export default function VideoOverlay({ video }: VideoOverlayProps) {
     </>
   );
 }
-

@@ -68,9 +68,9 @@ export default function UploadPage() {
         title: "Success",
         description: "Video uploaded successfully!",
       });
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      const errorMessage = err.message || "Failed to save video";
+      const errorMessage = err instanceof Error ? err.message : "Failed to save video";
       setError(errorMessage);
       toast({
         title: "Error",
