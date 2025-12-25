@@ -2,6 +2,15 @@
 
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -15,42 +24,50 @@ export default function Header() {
   };
 
   return (
-    <header className="border-b border-black/10 bg-white text-black">
-      <div className="flex items-center justify-between py-4">
-        <Link href="/" className="font-semibold tracking-tight">
-          Reelspro
-        </Link>
-        <div className="flex items-center gap-3 text-sm">
-          {status === "loading" ? (
-            <span className="text-xs">Loading…</span>
-          ) : session ? (
-            <>
-              <span className="text-xs uppercase tracking-wide text-black/70">
-                {session.user?.email}
-              </span>
-              <button
-                onClick={handleSignout}
-                className="border border-black px-3 py-1 text-xs uppercase tracking-wide hover:bg-black hover:text-white transition-colors"
-              >
-                Sign out
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="border border-black px-3 py-1 text-xs uppercase tracking-wide hover:bg-black hover:text-white transition-colors"
-              >
-                Login
-              </Link>
-              <Link
-                href="/register"
-                className="border border-black px-3 py-1 text-xs uppercase tracking-wide hover:bg-black hover:text-white transition-colors"
-              >
-                Register
-              </Link>
-            </>
-          )}
+    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          <Link href="/" className="font-bold text-xl tracking-tight">
+            ReelsPro
+          </Link>
+          <div className="flex items-center gap-3">
+            {status === "loading" ? (
+              <Skeleton className="h-8 w-24" />
+            ) : session ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center gap-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={session.user?.image || ""} />
+                      <AvatarFallback>
+                        {session.user?.email?.charAt(0).toUpperCase() || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="hidden sm:inline text-sm">
+                      {session.user?.email}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link href="/upload">Upload Video</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignout}>
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link href="/login">Login</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/register">Register</Link>
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./components/Provider";
 import Header from "./components/Header";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Reelspro",
-  description: "Simple video reels",
+  title: "ReelsPro",
+  description: "Short-form video platform - Share and discover reels",
 };
 
 export default function RootLayout({
@@ -30,12 +31,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          <div className="min-h-screen bg-white text-black">
-            <div className="container mx-auto px-4">
-              <Header />
-            </div>
-            <main className="container mx-auto px-4 py-8">{children}</main>
+          <div className="min-h-screen bg-black flex flex-col">
+            <Header />
+            <main className="flex-1 overflow-y-auto">{children}</main>
           </div>
+          <Toaster />
         </Providers>
       </body>
     </html>

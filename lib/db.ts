@@ -18,6 +18,8 @@ export async function connectToDatabase() {
     };
 
     if(!cached.promise){
+        // Set strictPopulate to false globally
+        mongoose.set('strictPopulate', false);
         const opts ={
             bufferCommands: true,
             maxPoolSize: 10,

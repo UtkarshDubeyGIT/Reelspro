@@ -1,26 +1,30 @@
-# Reelspro
+# ReelsPro
 
-Reelspro is a modern, full-stack video sharing platform built with Next.js 15, TypeScript, MongoDB (via Mongoose), and NextAuth for authentication. It features secure user registration, login, video upload (with ImageKit integration), and a responsive UI styled with Tailwind CSS and DaisyUI.
+ReelsPro is a modern, full-stack short-form video platform built with Next.js 15, TypeScript, MongoDB (via Mongoose), and NextAuth for authentication. It features secure user registration, login, video upload (with ImageKit integration), and a beautiful UI built with shadcn/ui and Tailwind CSS. Focused on 9:16 vertical videos with a TikTok/Instagram Reels-style scrolling feed.
 
 ## Features
 
 - **User Authentication:**
+
   - Secure registration and login using NextAuth and credentials provider.
   - Passwords are hashed with bcryptjs.
   - Session management with JWT.
 
 - **Video Upload & Management:**
+
   - Upload videos and images using ImageKit (with server-side authentication).
   - Video metadata (title, description, thumbnail, etc.) stored in MongoDB.
   - Video transformation and quality settings supported.
 
 - **API Endpoints:**
+
   - `/api/auth/register`: Register a new user.
   - `/api/auth/[...nextauth]`: NextAuth authentication routes.
   - `/api/imagekit-auth`: Get ImageKit authentication parameters.
   - `/api/videos`: Get all videos or upload a new video (protected route).
 
 - **Frontend:**
+
   - Built with React and Next.js App Router.
   - Responsive design with Tailwind CSS and DaisyUI.
   - Modern UI with custom fonts (Geist).
@@ -32,15 +36,17 @@ Reelspro is a modern, full-stack video sharing platform built with Next.js 15, T
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
 - MongoDB instance (local or cloud)
 - ImageKit account (for media uploads)
 
 ### Installation
+
 1. **Clone the repository:**
    ```bash
    git clone <your-repo-url>
-   cd Reelspro
+   cd mediashare
    ```
 2. **Install dependencies:**
    ```bash
@@ -49,6 +55,7 @@ Reelspro is a modern, full-stack video sharing platform built with Next.js 15, T
    yarn install
    ```
 3. **Configure environment variables:**
+
    - Copy `env.sample` to `.env.local` and fill in the required values:
      ```env
      MONGODB_URL=your_mongodb_connection_string
@@ -92,6 +99,7 @@ public/                        # Static assets
 ```
 
 ## Key Technologies
+
 - **Next.js 15** (App Router)
 - **TypeScript**
 - **MongoDB & Mongoose**
@@ -102,29 +110,36 @@ public/                        # Static assets
 ## API Overview
 
 ### Register User
+
 - **POST** `/api/auth/register`
   - Body: `{ email, password }`
   - Response: Success or error message
 
 ### Login
+
 - **POST** `/api/auth/[...nextauth]`
   - Handled by NextAuth
 
 ### Upload Video
+
 - **POST** `/api/videos`
   - Requires authentication
   - Body: `{ title, description, videoUrl, thumbnailUrl, ... }`
 
 ### Get Videos
+
 - **GET** `/api/videos`
   - Returns list of videos
 
 ### ImageKit Auth
+
 - **GET** `/api/imagekit-auth`
   - Returns ImageKit authentication parameters
 
 ## Environment Variables
+
 See `.env.sample` for required variables. Example:
+
 ```
 MONGODB_URL=your_mongodb_connection_string
 NEXTAUTH_SECRET=your_nextauth_secret
@@ -134,20 +149,24 @@ NEXT_PUBLIC_URL_ENDPOINT=your_imagekit_url_endpoint
 ```
 
 ## Development Scripts
+
 - `npm run dev` — Start development server
 - `npm run build` — Build for production
 - `npm run start` — Start production server
 - `npm run lint` — Lint codebase
 
 ## Deployment
+
 You can deploy this app to Vercel or any Node.js hosting provider. Ensure all environment variables are set in your deployment environment.
 
 ## Contributing
+
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
+
 [MIT](LICENSE)
 
 ---
 
-*This project follows best practices for security, scalability, and maintainability. For questions or support, please open an issue.*
+_This project follows best practices for security, scalability, and maintainability. For questions or support, please open an issue._

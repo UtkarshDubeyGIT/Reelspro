@@ -5,6 +5,19 @@ import { apiClient } from "@/lib/api-client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useToast } from "@/hooks/use-toast";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function UploadPage() {
   const { data: session, status } = useSession();
@@ -12,10 +25,15 @@ export default function UploadPage() {
   const [description, setDescription] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [videoMetadata, setVideoMetadata] = useState<{
+    duration: number;
+    aspectRatio: string;
+  } | null>(null);
   const [progress, setProgress] = useState({ video: 0, thumb: 0 });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const disabled = status === "loading" || !session;
 
@@ -24,6 +42,11 @@ export default function UploadPage() {
     setError(null);
     setSuccess(null);
     setSubmitting(true);
+    if (!videoMetadata) {
+      setError("Please upload a video first");
+      return;
+    }
+
     try {
       await apiClient.createVideo({
         title,
@@ -31,156 +54,163 @@ export default function UploadPage() {
         videoUrl,
         thumbnailUrl,
         controls: true,
+        duration: videoMetadata.duration,
+        aspectRatio: videoMetadata.aspectRatio,
       });
       setSuccess("Saved video");
       setTitle("");
       setDescription("");
       setVideoUrl("");
       setThumbnailUrl("");
+      setVideoMetadata(null);
       setProgress({ video: 0, thumb: 0 });
-    } catch (err) {
+      toast({
+        title: "Success",
+        description: "Video uploaded successfully!",
+      });
+    } catch (err: any) {
       console.error(err);
-      setError("Failed to save video");
+      const errorMessage = err.message || "Failed to save video";
+      setError(errorMessage);
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="space-y-8">
-      <div className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.3em] text-black/60">
-          Upload
-        </p>
-        <h1 className="text-3xl font-semibold text-black">
-          Send a video to ImageKit
-        </h1>
-        <p className="text-sm text-black/70">
-          Upload video and thumbnail, then save the record. Everything stays
-          black & white.
-        </p>
-        <Link className="text-xs uppercase underline" href="/">
-          Back to list
-        </Link>
-      </div>
-
-      {disabled ? (
-        <div className="rounded border border-dashed border-black/15 p-6 text-sm text-black/70">
-          Login to upload.{" "}
-          <Link className="underline" href="/login">
-            Go to login
-          </Link>
-          .
+    <div className="container mx-auto px-4 py-8 pb-16 max-w-4xl">
+      <div className="space-y-8">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold">Upload Video</h1>
+          <p className="text-muted-foreground">
+            Upload a short-form video (max 60 seconds, 9:16 aspect ratio)
+          </p>
+          <Button variant="ghost" asChild>
+            <Link href="/">← Back to feed</Link>
+          </Button>
         </div>
-      ) : (
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-6 rounded border border-black/10 bg-white p-6"
-        >
-          <div className="grid gap-3 md:grid-cols-2">
-            <div className="space-y-3">
-              <label className="text-xs uppercase tracking-wide text-black/60">
-                Video
-              </label>
-              <FileUpload
-                fileType="video"
-                onSuccess={(res) => setVideoUrl(res.url)}
-                onProgress={(p) =>
-                  setProgress((prev) => ({ ...prev, video: p }))
-                }
-              />
-              {progress.video > 0 && (
-                <div className="text-xs text-black/60">
-                  Video upload: {progress.video}%
+
+        {disabled ? (
+          <Card>
+            <CardContent className="p-6">
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Please{" "}
+                  <Link href="/login" className="underline font-medium">
+                    login
+                  </Link>{" "}
+                  to upload videos.
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle>Video Details</CardTitle>
+              <CardDescription>
+                Upload your video and thumbnail, then add details
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium">Video</label>
+                    <FileUpload
+                      fileType="video"
+                      onSuccess={(res) => {
+                        setVideoUrl(res.url);
+                        if (res.duration && res.aspectRatio) {
+                          setVideoMetadata({
+                            duration: res.duration,
+                            aspectRatio: res.aspectRatio,
+                          });
+                        }
+                      }}
+                      onProgress={(p) =>
+                        setProgress((prev) => ({ ...prev, video: p }))
+                      }
+                      onVideoMetadata={(metadata) => setVideoMetadata(metadata)}
+                    />
+                    {progress.video > 0 && (
+                      <div className="text-xs text-muted-foreground">
+                        Video upload: {progress.video}%
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium">Thumbnail</label>
+                    <FileUpload
+                      fileType="image"
+                      onSuccess={(res) => setThumbnailUrl(res.url)}
+                      onProgress={(p) =>
+                        setProgress((prev) => ({ ...prev, thumb: p }))
+                      }
+                    />
+                    {progress.thumb > 0 && (
+                      <div className="text-xs text-muted-foreground">
+                        Thumbnail upload: {progress.thumb}%
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-            </div>
-            <div className="space-y-3">
-              <label className="text-xs uppercase tracking-wide text-black/60">
-                Thumbnail
-              </label>
-              <FileUpload
-                fileType="image"
-                onSuccess={(res) => setThumbnailUrl(res.url)}
-                onProgress={(p) =>
-                  setProgress((prev) => ({ ...prev, thumb: p }))
-                }
-              />
-              {progress.thumb > 0 && (
-                <div className="text-xs text-black/60">
-                  Thumbnail upload: {progress.thumb}%
+
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <label className="text-sm font-medium">Title</label>
+                    <Input
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      required
+                      placeholder="Enter video title"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label className="text-sm font-medium">Description</label>
+                    <Textarea
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      required
+                      rows={3}
+                      placeholder="Describe your video..."
+                    />
+                  </div>
                 </div>
-              )}
-            </div>
-          </div>
 
-          <div className="grid gap-3">
-            <div className="grid gap-2">
-              <label className="text-xs uppercase tracking-wide text-black/60">
-                Title
-              </label>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                className="w-full border border-black/20 bg-white px-3 py-2 text-sm outline-none focus:border-black"
-                placeholder="Title"
-              />
-            </div>
-            <div className="grid gap-2">
-              <label className="text-xs uppercase tracking-wide text-black/60">
-                Description
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-                className="w-full border border-black/20 bg-white px-3 py-2 text-sm outline-none focus:border-black"
-                rows={3}
-                placeholder="What is this about?"
-              />
-            </div>
-          </div>
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                {success && (
+                  <Alert>
+                    <CheckCircle2 className="h-4 w-4" />
+                    <AlertDescription>{success}</AlertDescription>
+                  </Alert>
+                )}
 
-          <div className="flex flex-wrap items-center gap-3 text-xs text-black/60">
-            <span>
-              Video URL:{" "}
-              {videoUrl ? (
-                <span className="text-black">{videoUrl}</span>
-              ) : (
-                "Pending"
-              )}
-            </span>
-            <span>
-              Thumbnail URL:{" "}
-              {thumbnailUrl ? (
-                <span className="text-black">{thumbnailUrl}</span>
-              ) : (
-                "Pending"
-              )}
-            </span>
-          </div>
-
-          {error && (
-            <div className="text-xs uppercase tracking-wide text-red-600">
-              {error}
-            </div>
-          )}
-          {success && (
-            <div className="text-xs uppercase tracking-wide text-green-700">
-              {success}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={submitting || !videoUrl || !thumbnailUrl}
-            className="border border-black px-4 py-2 text-xs uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:border-black/30 disabled:text-black/30 hover:bg-black hover:text-white"
-          >
-            {submitting ? "Saving…" : "Save video"}
-          </button>
-        </form>
-      )}
+                <Button
+                  type="submit"
+                  disabled={
+                    submitting || !videoUrl || !thumbnailUrl || !videoMetadata
+                  }
+                  className="w-full"
+                >
+                  {submitting ? "Saving…" : "Save Video"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }
