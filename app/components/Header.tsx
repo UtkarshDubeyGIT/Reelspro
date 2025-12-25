@@ -24,10 +24,13 @@ export default function Header() {
   };
 
   return (
-    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+    <header className="border-b border-border/40 bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="font-bold text-xl tracking-tight">
+          <Link 
+            href="/" 
+            className="font-bold text-2xl tracking-tight bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent hover:from-blue-700 hover:to-blue-600 transition-all"
+          >
             ReelsPro
           </Link>
           <div className="flex items-center gap-3">
@@ -36,23 +39,23 @@ export default function Header() {
             ) : session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
+                  <Button variant="ghost" className="flex items-center gap-2 hover:bg-primary/10 hover:text-primary transition-colors">
+                    <Avatar className="h-8 w-8 ring-2 ring-primary/20">
                       <AvatarImage src={session.user?.image || ""} />
-                      <AvatarFallback>
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                         {session.user?.email?.charAt(0).toUpperCase() || "U"}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="hidden sm:inline text-sm">
+                    <span className="hidden sm:inline text-sm font-medium">
                       {session.user?.email}
                     </span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem asChild>
-                    <Link href="/upload">Upload Video</Link>
+                    <Link href="/upload" className="cursor-pointer">Upload Video</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleSignout}>
+                  <DropdownMenuItem onClick={handleSignout} className="text-destructive focus:text-destructive">
                     Sign out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -60,9 +63,9 @@ export default function Header() {
             ) : (
               <>
                 <Button variant="ghost" asChild>
-                  <Link href="/login">Login</Link>
+                  <Link href="/login" className="hover:text-primary">Login</Link>
                 </Button>
-                <Button asChild>
+                <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
                   <Link href="/register">Register</Link>
                 </Button>
               </>

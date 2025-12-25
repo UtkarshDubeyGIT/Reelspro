@@ -26,8 +26,11 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">Loading videos...</p>
+      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-blue-50/50 via-background to-blue-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+        <div className="text-center space-y-4">
+          <div className="mx-auto w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+          <p className="text-muted-foreground font-medium">Loading videos...</p>
+        </div>
       </div>
     );
   }

@@ -99,41 +99,45 @@ export default function ProfilePage() {
   const isOwnProfile = session?.user?.email === profile.email;
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-background to-blue-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-4">
       <div className="max-w-4xl mx-auto space-y-6">
-        <Card>
+        <Card className="border-primary/20 shadow-lg">
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-              <Avatar className="h-20 w-20">
+              <Avatar className="h-24 w-24 ring-4 ring-primary/20 border-4 border-background">
                 <AvatarImage src={profile.avatar} alt={userName} />
-                <AvatarFallback className="text-2xl">
+                <AvatarFallback className="text-2xl bg-primary/10 text-primary font-bold">
                   {userName.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <h1 className="text-2xl font-bold mb-2">{userName}</h1>
+                <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
+                  {userName}
+                </h1>
                 {profile.username && (
-                  <p className="text-muted-foreground mb-2">@{profile.username}</p>
+                  <p className="text-muted-foreground mb-2 text-lg">@{profile.username}</p>
                 )}
                 {profile.bio && (
-                  <p className="text-sm mb-4">{profile.bio}</p>
+                  <p className="text-sm mb-4 text-muted-foreground">{profile.bio}</p>
                 )}
-                <div className="flex gap-4 mb-4">
-                  <div>
-                    <p className="font-semibold">{profile.stats.videos}</p>
+                <div className="flex gap-6 mb-4">
+                  <div className="text-center">
+                    <p className="font-bold text-xl text-primary">{profile.stats.videos}</p>
                     <p className="text-sm text-muted-foreground">Videos</p>
                   </div>
-                  <div>
-                    <p className="font-semibold">{profile.stats.followers}</p>
+                  <div className="text-center">
+                    <p className="font-bold text-xl text-primary">{profile.stats.followers}</p>
                     <p className="text-sm text-muted-foreground">Followers</p>
                   </div>
-                  <div>
-                    <p className="font-semibold">{profile.stats.following}</p>
+                  <div className="text-center">
+                    <p className="font-bold text-xl text-primary">{profile.stats.following}</p>
                     <p className="text-sm text-muted-foreground">Following</p>
                   </div>
                 </div>
                 {!isOwnProfile && (
-                  <Button>Follow</Button>
+                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                    Follow
+                  </Button>
                 )}
               </div>
             </div>
@@ -141,9 +145,13 @@ export default function ProfilePage() {
         </Card>
 
         <Tabs defaultValue="videos" className="w-full">
-          <TabsList>
-            <TabsTrigger value="videos">Videos</TabsTrigger>
-            <TabsTrigger value="liked">Liked</TabsTrigger>
+          <TabsList className="bg-card border border-border">
+            <TabsTrigger value="videos" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Videos
+            </TabsTrigger>
+            <TabsTrigger value="liked" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Liked
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="videos">
             {profile.videos.length === 0 ? (
@@ -156,16 +164,17 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {profile.videos.map((video) => (
                   <Link key={video._id?.toString()} href={`/?video=${video._id}`}>
-                    <Card className="overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
-                      <div className="aspect-[9/16] relative">
+                    <Card className="overflow-hidden cursor-pointer hover:opacity-90 transition-all hover:shadow-lg hover:border-primary/50 border-border">
+                      <div className="aspect-[9/16] relative group">
                         <video
                           src={video.videoUrl}
                           poster={video.thumbnailUrl}
                           className="w-full h-full object-cover"
                           muted
                         />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                         <div className="absolute bottom-2 left-2 flex items-center gap-2">
-                          <Badge variant="secondary" className="bg-black/50 text-white">
+                          <Badge variant="secondary" className="bg-black/70 backdrop-blur-sm text-white border-primary/30">
                             <span className="mr-1">❤️</span>
                             {video.likes || 0}
                           </Badge>

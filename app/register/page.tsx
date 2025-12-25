@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -44,78 +49,89 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="mx-auto max-w-md space-y-6 rounded border border-black/10 bg-white p-6">
-      <div className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.3em] text-black/60">
-          Register
-        </p>
-        <h1 className="text-2xl font-semibold text-black">Create an account</h1>
-        <p className="text-sm text-black/70">
-          Sign up with an email and password.
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-xs uppercase tracking-wide text-black/60">
-            Email
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full border border-black/20 bg-white px-3 py-2 text-sm outline-none focus:border-black"
-            placeholder="you@example.com"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-xs uppercase tracking-wide text-black/60">
-            Password
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full border border-black/20 bg-white px-3 py-2 text-sm outline-none focus:border-black"
-            placeholder="••••••••"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-xs uppercase tracking-wide text-black/60">
-            Confirm password
-          </label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            className="w-full border border-black/20 bg-white px-3 py-2 text-sm outline-none focus:border-black"
-            placeholder="••••••••"
-          />
-        </div>
-        {error && (
-          <div className="text-xs uppercase tracking-wide text-red-600">
-            {error}
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <Card className="w-full max-w-md shadow-xl border-primary/20">
+        <CardHeader className="space-y-1 text-center">
+          <div className="mx-auto mb-2">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
+              ReelsPro
+            </h1>
           </div>
-        )}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full border border-black px-4 py-2 text-xs uppercase tracking-wide transition-colors hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:border-black/30 disabled:text-black/30"
-        >
-          {loading ? "Registering…" : "Register"}
-        </button>
-      </form>
+          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+          <CardDescription>
+            Join ReelsPro to start sharing and discovering amazing short videos
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium">
+                Email
+              </label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="you@example.com"
+                className="focus-visible:ring-primary"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-medium">
+                Password
+              </label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                className="focus-visible:ring-primary"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="text-sm font-medium">
+                Confirm Password
+              </label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                className="focus-visible:ring-primary"
+              />
+            </div>
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              {loading ? "Registering…" : "Create account"}
+            </Button>
+          </form>
 
-      <p className="text-xs text-black/60">
-        Already have an account?{" "}
-        <Link className="underline" href="/login">
-          Login
-        </Link>
-        .
-      </p>
+          <div className="mt-6 text-center text-sm">
+            <span className="text-muted-foreground">Already have an account? </span>
+            <Link 
+              href="/login" 
+              className="text-primary hover:text-primary/80 font-medium underline underline-offset-4"
+            >
+              Sign in
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

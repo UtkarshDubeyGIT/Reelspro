@@ -138,26 +138,26 @@ export default function VideoOverlay({ video }: VideoOverlayProps) {
 
   return (
     <>
-      <div className="absolute bottom-0 left-0 right-0 p-4 text-white pointer-events-none">
+      <div className="absolute bottom-0 left-0 right-0 p-4 text-white pointer-events-none bg-gradient-to-t from-black/80 via-black/40 to-transparent">
         <div className="flex items-end justify-between max-w-md mx-auto">
           {/* Left side - Author info */}
           <div className="flex-1 pointer-events-auto">
             <Link
               href={`/profile/${authorId}`}
-              className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity group"
             >
-              <Avatar className="h-10 w-10 border-2 border-white">
+              <Avatar className="h-10 w-10 border-2 border-primary/50 ring-2 ring-primary/30 group-hover:border-primary transition-colors">
                 <AvatarImage src={authorAvatar} alt={authorName} />
-                <AvatarFallback>
+                <AvatarFallback className="bg-primary/20 text-primary font-semibold">
                   {authorName.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-semibold text-sm">{authorName}</p>
+                <p className="font-semibold text-sm drop-shadow-lg">{authorName}</p>
               </div>
             </Link>
-            <p className="text-sm mb-1 line-clamp-2">{video.title}</p>
-            <p className="text-xs text-white/80 line-clamp-1">
+            <p className="text-sm mb-1 line-clamp-2 font-medium drop-shadow-md">{video.title}</p>
+            <p className="text-xs text-white/90 line-clamp-1 drop-shadow">
               {video.description}
             </p>
           </div>
@@ -171,8 +171,8 @@ export default function VideoOverlay({ video }: VideoOverlayProps) {
                     variant="ghost"
                     size="icon"
                     className={cn(
-                      "rounded-full bg-black/30 backdrop-blur-sm hover:bg-black/50",
-                      liked && "text-red-500"
+                      "rounded-full bg-black/40 backdrop-blur-md hover:bg-black/60 border border-white/20 transition-all",
+                      liked && "text-red-500 bg-red-500/20 border-red-500/30"
                     )}
                     onClick={handleLike}
                     disabled={loading}
@@ -185,7 +185,7 @@ export default function VideoOverlay({ video }: VideoOverlayProps) {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <p className="text-xs text-center">{likesCount}</p>
+            <p className="text-xs text-center font-semibold text-white drop-shadow-lg">{likesCount}</p>
 
             <TooltipProvider>
               <Tooltip>
@@ -193,10 +193,10 @@ export default function VideoOverlay({ video }: VideoOverlayProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="rounded-full bg-black/30 backdrop-blur-sm hover:bg-black/50"
+                    className="rounded-full bg-black/40 backdrop-blur-md hover:bg-primary/30 border border-white/20 transition-all hover:border-primary/50"
                     onClick={() => setShowComments(true)}
                   >
-                    <MessageCircle className="h-6 w-6" />
+                    <MessageCircle className="h-6 w-6 text-white" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -211,10 +211,10 @@ export default function VideoOverlay({ video }: VideoOverlayProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="rounded-full bg-black/30 backdrop-blur-sm hover:bg-black/50"
+                    className="rounded-full bg-black/40 backdrop-blur-md hover:bg-primary/30 border border-white/20 transition-all hover:border-primary/50"
                     onClick={handleShare}
                   >
-                    <Share2 className="h-6 w-6" />
+                    <Share2 className="h-6 w-6 text-white" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>

@@ -143,14 +143,14 @@ export default function ReelPlayer({ video, isActive, onVideoEnd }: ReelPlayerPr
             onClick={handleVideoClick}
           />
           {needsInteraction && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
               <Button
                 onClick={handlePlayClick}
                 size="lg"
-                className="rounded-full w-16 h-16 p-0"
-                variant="secondary"
+                className="rounded-full w-20 h-20 p-0 bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xl ring-4 ring-primary/30"
+                variant="default"
               >
-                <Play className="w-8 h-8 ml-1" fill="currentColor" />
+                <Play className="w-10 h-10 ml-1" fill="currentColor" />
               </Button>
             </div>
           )}

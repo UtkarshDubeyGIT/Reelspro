@@ -86,13 +86,19 @@ export default function UploadPage() {
     <div className="container mx-auto px-4 py-8 pb-16 max-w-4xl">
       <div className="space-y-8">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold">Upload Video</h1>
-          <p className="text-muted-foreground">
-            Upload a short-form video (max 60 seconds, 9:16 aspect ratio)
-          </p>
-          <Button variant="ghost" asChild>
-            <Link href="/">← Back to feed</Link>
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" asChild className="hover:bg-primary/10 hover:text-primary">
+              <Link href="/">←</Link>
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
+                Upload Video
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                Upload a short-form video (max 60 seconds, 9:16 aspect ratio)
+              </p>
+            </div>
+          </div>
         </div>
 
         {disabled ? (
@@ -202,7 +208,7 @@ export default function UploadPage() {
                   disabled={
                     submitting || !videoUrl || !thumbnailUrl || !videoMetadata
                   }
-                  className="w-full"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   {submitting ? "Saving…" : "Save Video"}
                 </Button>

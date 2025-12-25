@@ -191,6 +191,7 @@ export default function CommentSection({ videoId, onClose }: CommentSectionProps
               type="submit"
               size="icon"
               disabled={!newComment.trim() || submitting}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               <Send className="h-4 w-4" />
             </Button>

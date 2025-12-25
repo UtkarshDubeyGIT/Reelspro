@@ -119,9 +119,14 @@ export default function ReelsFeed({ initialVideos = [] }: ReelsFeedProps) {
 
   if (videos.length === 0 && !loading) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg mb-2">No videos yet</p>
+      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-blue-50/50 via-background to-blue-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+        <div className="text-center space-y-4">
+          <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+            <svg className="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <p className="text-xl font-semibold text-foreground">No videos yet</p>
           <p className="text-sm text-muted-foreground">
             Upload a video to get started
           </p>
@@ -166,22 +171,25 @@ export default function ReelsFeed({ initialVideos = [] }: ReelsFeedProps) {
       )}
 
       {error && (
-        <div className="h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-lg text-destructive mb-2">{error}</p>
-            <button
+        <div className="h-screen flex items-center justify-center bg-gradient-to-br from-blue-50/50 via-background to-blue-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+          <div className="text-center space-y-4">
+            <p className="text-lg text-destructive mb-2 font-semibold">{error}</p>
+            <Button
               onClick={loadMoreVideos}
-              className="text-sm underline"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               Try again
-            </button>
+            </Button>
           </div>
         </div>
       )}
 
       {!hasMore && videos.length > 0 && (
-        <div className="h-screen flex items-center justify-center">
-          <p className="text-muted-foreground">No more videos</p>
+        <div className="h-screen flex items-center justify-center bg-gradient-to-br from-blue-50/50 via-background to-blue-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+          <div className="text-center space-y-2">
+            <p className="text-muted-foreground text-lg">You're all caught up!</p>
+            <p className="text-sm text-muted-foreground">No more videos to show</p>
+          </div>
         </div>
       )}
     </div>
