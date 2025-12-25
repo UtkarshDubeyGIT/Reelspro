@@ -42,10 +42,27 @@ export async function POST(request: NextRequest) {
     // Send verification email
     try {
       await sendVerificationEmail(email, verificationToken);
-    } catch (emailError) {
+    } catch (emailError: any) {
       console.error("Failed to send verification email:", emailError);
-      // Still return success, but log the error
+      
+      // If it's a Resend validation error, return a more helpful error
+      if (emailError?.message?.includes("Resend API Error")) {
+        return NextResponse.json(
+          { 
+            error: "Failed to send verification email. Please check your Resend configuration.",
+            details: emailError.message,
+            verificationToken: process.env.NODE_ENV === "development" ? verificationToken : undefined, // Only expose token in dev
+            verificationUrl: process.env.NODE_ENV === "development" 
+              ? `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/verify-email?token=${verificationToken}`
+              : undefined
+          },
+          { status: 500 }
+        );
+      }
+      
+      // For other errors, still create the user but log the error
       // In production, you might want to handle this differently
+      console.warn("User created but verification email failed to send. Token:", verificationToken);
     }
 
     return NextResponse.json(
