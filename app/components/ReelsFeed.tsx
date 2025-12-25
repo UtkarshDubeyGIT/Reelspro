@@ -68,7 +68,8 @@ export default function ReelsFeed({ initialVideos = [] }: ReelsFeedProps) {
       }
     );
 
-    videoRefs.current.forEach((ref) => {
+    const currentRefs = videoRefs.current;
+    currentRefs.forEach((ref) => {
       if (ref) {
         observerRef.current?.observe(ref);
       }
@@ -76,7 +77,7 @@ export default function ReelsFeed({ initialVideos = [] }: ReelsFeedProps) {
 
     return () => {
       if (observerRef.current) {
-        videoRefs.current.forEach((ref) => {
+        currentRefs.forEach((ref) => {
           if (ref) {
             observerRef.current?.unobserve(ref);
           }

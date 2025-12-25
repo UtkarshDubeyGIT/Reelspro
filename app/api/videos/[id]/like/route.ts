@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import Video from "@/models/Video";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 export async function POST(
   request: NextRequest,
@@ -37,13 +38,13 @@ export async function POST(
     const userId = user._id;
     const likedBy = video.likedBy || [];
     const isLiked = likedBy.some(
-      (id: any) => id.toString() === userId.toString()
+      (id: mongoose.Types.ObjectId) => id.toString() === userId.toString()
     );
 
     if (isLiked) {
       // Unlike
       video.likedBy = likedBy.filter(
-        (id: any) => id.toString() !== userId.toString()
+        (id: mongoose.Types.ObjectId) => id.toString() !== userId.toString()
       );
       video.likes = Math.max(0, (video.likes || 0) - 1);
     } else {
@@ -96,7 +97,7 @@ export async function GET(
     const userId = user._id;
     const likedBy = video.likedBy || [];
     const isLiked = likedBy.some(
-      (id: any) => id.toString() === userId.toString()
+      (id: mongoose.Types.ObjectId) => id.toString() === userId.toString()
     );
 
     return NextResponse.json({ liked: isLiked });
