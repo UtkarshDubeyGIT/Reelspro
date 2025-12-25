@@ -5,7 +5,6 @@ import { IVideo } from "@/models/Video";
 import ReelPlayer from "./ReelPlayer";
 import VideoOverlay from "./VideoOverlay";
 import { Skeleton } from "@/components/ui/skeleton";
-import { apiClient } from "@/lib/api-client";
 
 interface ReelsFeedProps {
   initialVideos?: IVideo[];

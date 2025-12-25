@@ -1,7 +1,3 @@
 "use client";
 
-import React from "react";
-
-function Login(){
-    
-}
+// This file is intentionally empty - login is handled by app/login/page.tsx

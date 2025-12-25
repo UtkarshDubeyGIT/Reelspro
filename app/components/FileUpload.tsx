@@ -3,8 +3,7 @@
 import { IKUpload } from "imagekitio-next";
 import { IKUploadResponse } from "imagekitio-next/dist/types/components/IKUpload/props";
 import { Loader2 } from "lucide-react";
-import { useState, useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface FileUploadProps {
@@ -23,8 +22,6 @@ export default function FileUpload({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validating, setValidating] = useState(false);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const onError = (err: { message: string }) => {
     console.error("Upload error", err);
@@ -33,14 +30,14 @@ export default function FileUpload({
     setValidating(false);
   };
 
-  const handleSuccess = (response: IKUploadResponse & { duration?: number; aspectRatio?: string }) => {
+  const handleSuccess = (response: IKUploadResponse & { duration?: number; aspectRatio?: string }): void => {
     setUploading(false);
     setValidating(false);
     setError(null);
     onSuccess(response);
   };
 
-  const handleStartUpload = () => {
+  const handleStartUpload = (): void => {
     setUploading(true);
     setError(null);
   };
@@ -108,8 +105,9 @@ export default function FileUpload({
         }
         setValidating(false);
         return true;
-      } catch (err: any) {
-        setError(err.message || "Video validation failed");
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Video validation failed";
+        setError(errorMessage);
         setValidating(false);
         return false;
       }
