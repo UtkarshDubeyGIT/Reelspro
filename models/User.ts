@@ -10,6 +10,9 @@ export interface IUser{
     bio?: string;
     followers?: mongoose.Types.ObjectId[];
     following?: mongoose.Types.ObjectId[];
+    emailVerified?: boolean;
+    verificationToken?: string;
+    verificationTokenExpiry?: Date;
     _id?: mongoose.Types.ObjectId;
     createdAt?: Date;
     updatedAt?:Date;
@@ -50,6 +53,18 @@ const userSchema = new Schema<IUser>(
         },
         followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
         following: [{ type: Schema.Types.ObjectId, ref: "User" }],
+        emailVerified: {
+            type: Boolean,
+            default: false
+        },
+        verificationToken: {
+            type: String,
+            default: null
+        },
+        verificationTokenExpiry: {
+            type: Date,
+            default: null
+        }
     },
     {
         timestamps:true
